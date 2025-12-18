@@ -389,6 +389,25 @@
     if (!best) throw new Error("Não foi possível detectar o path principal da pista.");
     mainPath = best;
 
+    // ===== FIX CRÍTICO: enquadramento consistente para TODAS as pistas =====
+    // Problema observado: em quase todas as pistas (exceto a Austrália), o traçado fica
+    // minúsculo/cortado no canto e os carros não aparecem. A causa típica é SVG com viewBox
+    // incompatível (ou enorme) + elementos decorativos. Aqui recalculamos o viewBox usando
+    // o bounding box do PATH principal detectado.
+    // Isso mantém o traçado e os carros sempre dentro da área visível, sem precisar editar SVG.
+    try {
+      const bb = mainPath.getBBox();
+      // padding proporcional + mínimo para não colar nas bordas
+      const pad = Math.max(20, Math.max(bb.width, bb.height) * 0.08);
+      svgRoot.setAttribute(
+        "viewBox",
+        `${bb.x - pad} ${bb.y - pad} ${bb.width + pad * 2} ${bb.height + pad * 2}`
+      );
+    } catch (e) {
+      // Se getBBox falhar por qualquer motivo, não quebrar a sessão.
+      console.warn("[track] Falha ao normalizar viewBox:", e);
+    }
+
     // estiliza pista (mantém look: fundo preto com traço claro)
     // NÃO destrói o SVG original — apenas aplica estilo no path principal
     mainPath.style.fill = "none";
