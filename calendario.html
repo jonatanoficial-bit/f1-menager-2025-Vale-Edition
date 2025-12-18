@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calendário & Grandes Prêmios – F1 Manager 2025</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- CSS global do jogo (mantenha se já existir) -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    :root {
+      --bg-overlay: rgba(0, 0, 0, 0.78);
+      --card-bg: rgba(12, 12, 18, 0.92);
+      --card-radius: 22px;
+      --accent-red: #ff1744;
+      --accent-green: #00e676;
+      --accent-blue: #40c4ff;
+      --accent-purple: #b388ff;
+      --text-muted: #c5c8d4;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #ffffff;
+      background-color: #000000;
+      background-image: url("assets/ui/mercado_bg.png");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+    }
+
+    .page-overlay {
+      min-height: 100vh;
+      width: 100%;
+      background: radial-gradient(circle at top, rgba(0,0,0,0.35), rgba(0,0,0,0.95));
+      backdrop-filter: blur(4px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP BAR */
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      gap: 16px;
+    }
+
+    .btn-back {
+      border: none;
+      outline: none;
+      padding: 10px 26px;
+      border-radius: 999px;
+      background: var(--accent-red);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 0 18px rgba(255, 23, 68, 0.6);
+      transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+    }
+
+    .btn-back:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 26px rgba(255, 23, 68, 0.9);
+    }
+
+    .manager-pill,
+    .team-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(9, 9, 15, 0.92);
+      box-shadow: 0 0 18px rgba(0, 0, 0, 0.5);
+      font-size: 0.75rem;
+      min-width: 190px;
+    }
+
+    .team-pill {
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .manager-pill-avatar,
+    .team-pill-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      object-fit: cover;
+      background: #222;
+    }
+
+    .manager-pill-text span,
+    .team-pill-text span {
+      display: block;
+      line-height: 1.1;
+    }
+
+    .pill-label {
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+    }
+
+    .pill-main {
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    .pill-sub {
+      opacity: 0.8;
+      font-size: 0.75rem;
+    }
+
+    /* HEADER TEXT */
+
+    .header-main {
+      padding: 8px 32px 0 32px;
+      max-width: 1200px;
+    }
+
+    .header-kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-size: 0.75rem;
+      color: #7ddcff;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      font-size: clamp(1.9rem, 3vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0 0 8px 0;
+    }
+
+    .header-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.5;
+    }
+
+    .header-footnote {
+      margin-top: 24px;
+      font-size: 0.8rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .header-footnote span {
+      opacity: 0.85;
+    }
+
+    /* CALENDAR SECTION */
+
+    .calendar-section {
+      padding: 24px 32px 40px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .row-between {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .section-label {
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.72);
+    }
+
+    .section-meta {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: rgba(255,255,255,0.65);
+    }
+
+    /* CAROUSEL */
+
+    .gp-carousel {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: row;
+      gap: 18px;
+      padding-bottom: 12px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.4) transparent;
+    }
+
+    .gp-carousel::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .gp-carousel::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .gp-carousel::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.4);
+      border-radius: 999px;
+    }
+
+    .gp-card {
+      min-width: 230px;
+      max-width: 280px;
+      background: linear-gradient(135deg, rgba(15,15,25,0.98), rgba(3,3,8,0.98));
+      border-radius: var(--card-radius);
+      padding: 14px 14px 16px 14px;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.75);
+      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .gp-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.9);
+      border-color: rgba(255,255,255,0.18);
+    }
+
+    .gp-tag-round {
+      position: absolute;
+      top: 10px;
+      left: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.7);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      opacity: 0.85;
+    }
+
+    .gp-tag-type {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.7);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      opacity: 0.85;
+    }
+
+    .gp-title {
+      margin-top: 20px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .gp-location {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .gp-date {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .gp-meta-line {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .gp-flag {
+      width: 16px;
+      height: 11px;
+      border-radius: 2px;
+      object-fit: cover;
+      border: 1px solid rgba(255,255,255,0.7);
+    }
+
+    .gp-cta {
+      margin-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gp-cta-main {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent-green);
+    }
+
+    .gp-cta-sub {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    @media (max-width: 800px) {
+      .top-bar {
+        padding: 12px 16px;
+      }
+
+      .header-main {
+        padding: 4px 16px 0 16px;
+      }
+
+      .calendar-section {
+        padding: 18px 16px 28px 16px;
+      }
+
+      .gp-card {
+        min-width: 210px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-overlay">
+
+    <!-- TOPO -->
+    <header class="top-bar">
+      <button class="btn-back" onclick="window.location.href='lobby.html'">&larr; VOLTAR</button>
+
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="team-pill" id="team-pill">
+          <img src="assets/teams/ferrari.png" alt="Equipe" class="team-pill-logo" id="team-logo">
+          <div class="team-pill-text">
+            <span class="pill-label">Equipe</span>
+            <span class="pill-main" id="team-name">Ferrari</span>
+            <span class="pill-sub" id="team-base">Maranello, Itália</span>
+          </div>
+        </div>
+
+        <div class="manager-pill" id="manager-pill">
+          <img src="assets/managers/manager_ethnic_01.png" alt="Manager" class="manager-pill-avatar" id="manager-avatar">
+          <div class="manager-pill-text">
+            <span class="pill-label">Manager</span>
+            <span class="pill-main" id="manager-name">Novo gerente</span>
+            <span class="pill-sub" id="manager-country">País / Nacionalidade</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- HEADER PRINCIPAL -->
+    <section class="header-main">
+      <div class="header-kicker">TEMPORADA OFICIAL F1 2025</div>
+      <h1 class="header-title">CALENDÁRIO &amp; GRANDES PRÊMIOS</h1>
+      <p class="header-subtitle">
+        Escolha o próximo fim de semana de corrida. O visual em carrossel foi pensado para você navegar como em um
+        catálogo de streaming, mas com GPs reais da temporada 2025. Ao selecionar um evento, você será levado diretamente
+        para o início do fim de semana: treino livre, classificação e corrida.
+      </p>
+      <div class="header-footnote">
+        <span>GRADE COMPLETA 2025</span>
+      </div>
+    </section>
+
+    <!-- LISTA / CARROSSEL -->
+    <section class="calendar-section">
+      <div class="row-between">
+        <div class="section-label">Grandes Prêmios</div>
+        <div class="section-meta">24 corridas • mundo todo</div>
+      </div>
+
+      <div class="gp-carousel" id="gp-carousel">
+        <!-- Cards são inseridos via JavaScript -->
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ==========================================================
+    // DADOS DO CALENDÁRIO 2025
+    // (os trackKey devem bater com os .svg em assets/tracks/)
+    // ==========================================================
+    const CALENDAR_2025 = [
+      { round: 1,  gp: "GP do Bahrein 2025",     circuit: "Sakhir",         country: "Bahrein",     trackKey: "bahrain",   date: "14–16 Março",  flag: "bh" },
+      { round: 2,  gp: "GP da Arábia Saudita",  circuit: "Jeddah",         country: "Arábia Saudita", trackKey: "jeddah",    date: "21–23 Março",  flag: "sa" },
+      { round: 3,  gp: "GP da Austrália 2025",  circuit: "Melbourne",      country: "Austrália",   trackKey: "australia", date: "04–06 Abril",  flag: "au" },
+      { round: 4,  gp: "GP do Japão 2025",      circuit: "Suzuka",         country: "Japão",       trackKey: "japan",     date: "11–13 Abril",  flag: "jp" },
+      { round: 5,  gp: "GP da China 2025",      circuit: "Xangai",         country: "China",       trackKey: "china",     date: "18–20 Abril",  flag: "cn" },
+      { round: 6,  gp: "GP de Miami 2025",      circuit: "Miami",          country: "EUA",         trackKey: "miami",     date: "02–04 Maio",   flag: "us" },
+      { round: 7,  gp: "GP da Emília-Romanha",  circuit: "Imola",          country: "Itália",      trackKey: "imola",     date: "16–18 Maio",   flag: "it" },
+      { round: 8,  gp: "GP de Mônaco 2025",     circuit: "Monte Carlo",    country: "Mônaco",      trackKey: "monaco",    date: "23–25 Maio",   flag: "mc" },
+      { round: 9,  gp: "GP do Canadá 2025",     circuit: "Montreal",       country: "Canadá",      trackKey: "canada",    date: "06–08 Junho",  flag: "ca" },
+      { round:10,  gp: "GP da Espanha 2025",    circuit: "Barcelona",      country: "Espanha",     trackKey: "spain",     date: "20–22 Junho",  flag: "es" },
+      { round:11,  gp: "GP da Áustria 2025",    circuit: "Red Bull Ring",  country: "Áustria",     trackKey: "austria",   date: "27–29 Junho",  flag: "at" },
+      { round:12,  gp: "GP da Grã-Bretanha",    circuit: "Silverstone",    country: "Reino Unido", trackKey: "uk",        date: "04–06 Julho",  flag: "gb" },
+      { round:13,  gp: "GP da Hungria 2025",    circuit: "Hungaroring",    country: "Hungria",     trackKey: "hungary",   date: "18–20 Julho",  flag: "hu" },
+      { round:14,  gp: "GP da Bélgica 2025",    circuit: "Spa-Francorchamps", country: "Bélgica", trackKey: "belgium",   date: "25–27 Julho",  flag: "be" },
+      { round:15,  gp: "GP da Holanda 2025",    circuit: "Zandvoort",      country: "Países Baixos", trackKey: "netherlands", date: "29–31 Ago", flag: "nl" },
+      { round:16,  gp: "GP da Itália 2025",     circuit: "Monza",          country: "Itália",      trackKey: "monza",     date: "05–07 Set",    flag: "it" },
+      { round:17,  gp: "GP do Azerbaijão 2025", circuit: "Baku",           country: "Azerbaijão",  trackKey: "baku",      date: "19–21 Set",    flag: "az" },
+      { round:18,  gp: "GP de Singapura 2025",  circuit: "Marina Bay",     country: "Singapura",   trackKey: "singapore", date: "03–05 Out",    flag: "sg" },
+      { round:19,  gp: "GP dos EUA 2025",       circuit: "COTA – Austin",  country: "EUA",         trackKey: "cota",      date: "17–19 Out",    flag: "us" },
+      { round:20,  gp: "GP do México 2025",     circuit: "Hermanos Rodríguez", country: "México", trackKey: "mexico",    date: "24–26 Out",    flag: "mx" },
+      { round:21,  gp: "GP de São Paulo 2025",  circuit: "Interlagos",     country: "Brasil",      trackKey: "brazil",    date: "07–09 Nov",    flag: "br" },
+      { round:22,  gp: "GP de Las Vegas 2025",  circuit: "Las Vegas Strip", country: "EUA",        trackKey: "lasvegas",  date: "20–22 Nov",    flag: "us" },
+      { round:23,  gp: "GP do Qatar 2025",      circuit: "Losail",         country: "Qatar",       trackKey: "qatar",     date: "28–30 Nov",    flag: "qa" },
+      { round:24,  gp: "GP de Abu Dhabi 2025",  circuit: "Yas Marina",     country: "Emirados Árabes", trackKey: "abudhabi", date: "05–07 Dez", flag: "ae" }
+    ];
+
+    // ==========================================================
+    // LER DADOS SALVOS (EQUIPE / MANAGER)
+    // ==========================================================
+    const userTeamKey = localStorage.getItem("f1m2025_user_team") || "ferrari";
+
+    const TEAM_METADATA = {
+      ferrari:   { name: "Ferrari",        base: "Maranello, Itália",   logo: "assets/teams/ferrari.png" },
+      redbull:   { name: "Red Bull Racing", base: "Milton Keynes, Reino Unido", logo: "assets/teams/redbull.png" },
+      mercedes:  { name: "Mercedes",      base: "Brackley, Reino Unido", logo: "assets/teams/mercedes.png" },
+      mclaren:   { name: "McLaren",       base: "Woking, Reino Unido", logo: "assets/teams/mclaren.png" },
+      aston:     { name: "Aston Martin",  base: "Silverstone, Reino Unido", logo: "assets/teams/aston.png" },
+      alpine:    { name: "Alpine",        base: "Enstone / Viry, França", logo: "assets/teams/alpine.png" },
+      sauber:    { name: "Sauber / Audi", base: "Hinwil, Suíça",       logo: "assets/teams/sauber.png" },
+      haas:      { name: "Haas",          base: "Kannapolis, EUA",     logo: "assets/teams/haas.png" },
+      williams:  { name: "Williams",      base: "Grove, Reino Unido",  logo: "assets/teams/williams.png" },
+      racingbulls: { name: "Racing Bulls", base: "Faenza, Itália",     logo: "assets/teams/racingbulls.png" }
+    };
+
+    function preencherTeamPill() {
+      const meta = TEAM_METADATA[userTeamKey] || TEAM_METADATA.ferrari;
+      document.getElementById("team-name").textContent = meta.name;
+      document.getElementById("team-base").textContent = meta.base;
+      document.getElementById("team-logo").src = meta.logo;
+    }
+
+    function preencherManagerPill() {
+      // Estrutura esperada (exemplo):
+      // { name: "Christian Horner", country: "Reino Unido", avatar: "assets/managers_real/horner.png" }
+      const raw = localStorage.getItem("f1m2025_manager");
+      if (!raw) return;
+
+      try {
+        const m = JSON.parse(raw);
+        if (m.name) document.getElementById("manager-name").textContent = m.name;
+        if (m.country) document.getElementById("manager-country").textContent = m.country;
+        if (m.avatar) document.getElementById("manager-avatar").src = m.avatar;
+      } catch (e) {
+        console.warn("Erro ao ler manager do localStorage:", e);
+      }
+    }
+
+    // ==========================================================
+    // CONSTRUIR CARDS
+    // ==========================================================
+    function criarCardsCalendario() {
+      const container = document.getElementById("gp-carousel");
+      container.innerHTML = "";
+
+      CALENDAR_2025.forEach(race => {
+        const card = document.createElement("article");
+        card.className = "gp-card";
+        card.dataset.track = race.trackKey;
+        card.dataset.gp = race.gp;
+
+        card.innerHTML = `
+          <div class="gp-tag-round">R${race.round.toString().padStart(2,"0")}</div>
+          <div class="gp-tag-type">Fim de semana oficial</div>
+
+          <div class="gp-title">${race.gp}</div>
+          <div class="gp-location">${race.circuit} • ${race.country}</div>
+          <div class="gp-date">${race.date}</div>
+
+          <div class="gp-meta-line">
+            <img src="assets/flags/${race.flag}.png" alt="${race.country}" class="gp-flag" />
+            <span>${race.country}</span>
+          </div>
+
+          <div class="gp-cta">
+            <div>
+              <div class="gp-cta-main">Entrar no fim de semana</div>
+              <div class="gp-cta-sub">Treino livre · Classificação · Corrida</div>
+            </div>
+          </div>
+        `;
+
+        card.addEventListener("click", () => {
+          const params = new URLSearchParams();
+          params.set("track", race.trackKey);
+          params.set("gp", race.gp);
+          params.set("userTeam", userTeamKey);
+
+          // *** AQUI ESTAVA O ERRO ***
+          // Antes: "practic.html"
+          // Agora: manda para o arquivo correto "practice.html"
+          window.location.href = "practice.html?" + params.toString();
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    // ==========================================================
+    // INIT
+    // ==========================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      preencherTeamPill();
+      preencherManagerPill();
+      criarCardsCalendario();
+    });
+  </script>
+</body>
+</html>

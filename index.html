@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>F1 MANAGER 2025 – Vale Games</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- CSS base do jogo -->
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="ui.css" />
+    <link rel="stylesheet" href="ui-screens.css" />
+
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      body.screen--capa {
+        color: #ffffff;
+        overflow: hidden; /* evita scroll na capa */
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ========= TELA 1: CAPA CINEMATOGRÁFICA ========= */
+
+      .intro-cover {
+        position: fixed;
+        inset: 0;
+        background-image: url("assets/ui/capa_bg.png");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 32px 24px 28px;
+        cursor: pointer;
+      }
+
+      .intro-gradient {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            circle at 15% 15%,
+            rgba(0, 0, 0, 0.85),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 80% 80%,
+            rgba(0, 0, 0, 0.9),
+            transparent 60%
+          );
+        pointer-events: none;
+      }
+
+      .intro-top,
+      .intro-bottom {
+        position: relative;
+        z-index: 1;
+      }
+
+      .intro-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .intro-logo-block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .intro-title-big {
+        font-size: clamp(2.5rem, 7vw, 3.4rem);
+        line-height: 1.02;
+        font-weight: 900;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .intro-sub {
+        font-size: 0.78rem;
+        max-width: 380px;
+        opacity: 0.85;
+      }
+
+      .intro-pill {
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .intro-bottom-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 18px;
+      }
+
+      .intro-cta {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        opacity: 0.9;
+      }
+
+      .intro-cta span {
+        font-size: 0.75rem;
+        opacity: 0.7;
+        display: block;
+        margin-top: 4px;
+      }
+
+      .intro-key-hint {
+        font-size: 0.78rem;
+        opacity: 0.8;
+      }
+
+      .intro-key-hint kbd {
+        padding: 3px 7px;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        font-size: 0.7rem;
+      }
+
+      /* ========= TELA 2: MENU PRINCIPAL (já existente) ========= */
+
+      .capa-overlay {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 32px 24px 28px;
+        background: radial-gradient(
+            circle at 10% 20%,
+            rgba(0, 0, 0, 0.75),
+            transparent 55%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(0, 0, 0, 0.9),
+            transparent 60%
+          );
+        background-image: url("assets/ui/capa_bg.png");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .capa-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .capa-logo-wrap {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .capa-logo-mark {
+        width: 40px;
+        height: 40px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        backdrop-filter: blur(6px);
+        background: linear-gradient(
+          145deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(0, 0, 0, 0.6)
+        );
+      }
+
+      .capa-logo-text {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        opacity: 0.85;
+      }
+
+      .capa-logo-text span:last-child {
+        font-size: 0.65rem;
+        opacity: 0.7;
+      }
+
+      .capa-badge {
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        opacity: 0.9;
+        backdrop-filter: blur(4px);
+        background: rgba(0, 0, 0, 0.4);
+      }
+
+      .capa-main {
+        display: grid;
+        grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+        gap: 28px;
+        align-items: center;
+        margin-top: 32px;
+        margin-bottom: 32px;
+      }
+
+      @media (max-width: 900px) {
+        .capa-main {
+          grid-template-columns: minmax(0, 1fr);
+          margin-top: 24px;
+        }
+      }
+
+      .capa-title {
+        font-size: clamp(2.4rem, 4vw, 3.1rem);
+        line-height: 1.05;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 12px;
+      }
+
+      .capa-subtitle {
+        font-size: 0.95rem;
+        max-width: 520px;
+        opacity: 0.88;
+      }
+
+      .capa-tagline {
+        margin-top: 16px;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        opacity: 0.7;
+      }
+
+      .capa-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 22px;
+      }
+
+      .btn-primary-big {
+        padding: 12px 24px;
+        border-radius: 999px;
+        border: none;
+        background: linear-gradient(135deg, #ff1e3c, #ff7b00);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+        box-shadow: 0 0 24px rgba(0, 0, 0, 0.85);
+      }
+
+      .btn-primary-big:active {
+        transform: translateY(1px);
+      }
+
+      .btn-ghost-big {
+        padding: 11px 22px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        background: rgba(0, 0, 0, 0.55);
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      }
+
+      .btn-ghost-big[disabled] {
+        opacity: 0.35;
+        cursor: default;
+      }
+
+      .capa-right {
+        border-radius: 24px;
+        padding: 18px 18px 16px;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: grid;
+        gap: 12px;
+      }
+
+      .capa-panel-title {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        opacity: 0.75;
+      }
+
+      .capa-save-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 14px;
+        background: radial-gradient(
+          circle at 0 50%,
+          rgba(0, 255, 135, 0.25),
+          transparent 60%
+        );
+        border: 1px solid rgba(0, 255, 135, 0.35);
+        font-size: 0.8rem;
+      }
+
+      .capa-save-row.empty {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+      }
+
+      .capa-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.75rem;
+        opacity: 0.8;
+      }
+
+      .capa-footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .pill {
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.68rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+
+  <body class="screen screen--capa">
+    <!-- TELA 1: CAPA -->
+    <div id="intro-cover" class="intro-cover">
+      <div class="intro-gradient"></div>
+
+      <div class="intro-top">
+        <div class="intro-logo-block">
+          <div class="intro-title-big">F1 Manager 2025</div>
+          <div class="intro-sub">
+            Protótipo jogável desenvolvido pela Vale Games. Toque em qualquer
+            lugar para entrar no paddock.
+          </div>
+        </div>
+        <div class="intro-pill">Vale Games · Vale Produção</div>
+      </div>
+
+      <div class="intro-bottom">
+        <div class="intro-bottom-main">
+          <div class="intro-cta">
+            TOQUE PARA COMEÇAR
+            <span>Ou pressione Enter no teclado</span>
+          </div>
+          <div class="intro-key-hint">
+            Melhor experiência em tela cheia.<br />
+            <span>Desktop: use <kbd>F11</kbd> · Mobile: “Adicionar à tela
+              inicial”.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 2: MENU PRINCIPAL -->
+    <div id="capa-main" class="capa-overlay hidden">
+      <!-- HEADER -->
+      <header class="capa-header">
+        <div class="capa-logo-wrap">
+          <div class="capa-logo-mark">VG</div>
+          <div class="capa-logo-text">
+            <span>Vale Games</span>
+            <span>Simulação • Estratégia • Música</span>
+          </div>
+        </div>
+
+        <div class="capa-badge">
+          Temporada oficial F1 2025 · Protótipo jogável
+        </div>
+      </header>
+
+      <!-- MAIN -->
+      <main class="capa-main">
+        <section>
+          <h1 class="capa-title">
+            F1 MANAGER<br />
+            TEMPORADA 2025
+          </h1>
+          <p class="capa-subtitle">
+            Assuma o comando de uma equipe de Fórmula 1, gerencie pilotos,
+            contratos, patrocínios e estratégia de corrida em um simulador
+            criado pela <strong>Vale Games</strong>.
+          </p>
+
+          <div class="capa-tagline">
+            Escolha seu manager, defina sua escuderia e comece a temporada.
+          </div>
+
+          <div class="capa-actions">
+            <button id="btn-new-career" class="btn-primary-big" type="button">
+              Iniciar nova carreira
+            </button>
+
+            <button
+              id="btn-continue"
+              class="btn-ghost-big"
+              type="button"
+              disabled
+            >
+              Continuar carreira
+            </button>
+          </div>
+        </section>
+
+        <aside class="capa-right">
+          <div class="capa-panel-title">Resumo rápido</div>
+
+          <div id="save-slot" class="capa-save-row empty">
+            <div>
+              <div id="save-slot-title" style="font-weight: 600">
+                Nenhuma carreira salva
+              </div>
+              <div
+                id="save-slot-sub"
+                style="font-size: 0.75rem; opacity: 0.8; margin-top: 2px"
+              >
+                Clique em “Iniciar nova carreira” para criar seu primeiro
+                manager.
+              </div>
+            </div>
+            <div>
+              <span class="pill">Slot 01</span>
+            </div>
+          </div>
+
+          <div style="font-size: 0.78rem; opacity: 0.9">
+            Este protótipo já está conectado à simulação de treino, qualifying
+            e corrida. As próximas versões vão aprofundar contratos, clima,
+            desgaste de pneus e falhas mecânicas.
+          </div>
+        </aside>
+      </main>
+
+      <!-- FOOTER -->
+      <footer class="capa-footer">
+        <div>
+          Vale Games · Vale Produção · Instituto Musical Vale<br />
+          <span style="opacity: 0.75">
+            Projeto autoral de simulação · Uso não oficial da F1 para fins de
+            estudo e prototipagem.
+          </span>
+        </div>
+
+        <div class="capa-footer-links">
+          <span class="pill">Versão 6.1 – Protótipo</span>
+          <span class="pill">Telemetria em desenvolvimento</span>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const intro = document.getElementById("intro-cover");
+      const capaMain = document.getElementById("capa-main");
+      const btnNew = document.getElementById("btn-new-career");
+      const btnContinue = document.getElementById("btn-continue");
+      const saveSlot = document.getElementById("save-slot");
+      const slotTitle = document.getElementById("save-slot-title");
+      const slotSub = document.getElementById("save-slot-sub");
+
+      function tryFullscreen() {
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) {
+          docEl.requestFullscreen().catch(() => {});
+        }
+      }
+
+      function entrarNoMenu() {
+        if (intro.classList.contains("hidden")) return;
+        intro.classList.add("hidden");
+        capaMain.classList.remove("hidden");
+        // opcional: tentar tela cheia
+        tryFullscreen();
+      }
+
+      intro.addEventListener("click", entrarNoMenu);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") entrarNoMenu();
+      });
+
+      function carregarSave() {
+        try {
+          const rawManager = localStorage.getItem("f1m2025_user_manager");
+          const teamKey = localStorage.getItem("f1m2025_user_team");
+          const hasCareer = !!rawManager && !!teamKey;
+
+          if (hasCareer) {
+            const manager = JSON.parse(rawManager);
+            saveSlot.classList.remove("empty");
+            slotTitle.textContent =
+              (manager.name || "Manager") + " – " + (manager.teamKey || "");
+            slotSub.textContent =
+              "Toque em “Continuar carreira” para ir direto ao lobby da equipe.";
+            btnContinue.disabled = false;
+          } else {
+            saveSlot.classList.add("empty");
+            slotTitle.textContent = "Nenhuma carreira salva";
+            slotSub.textContent =
+              "Clique em “Iniciar nova carreira” para criar seu primeiro manager.";
+            btnContinue.disabled = true;
+          }
+        } catch (e) {
+          console.warn("Erro lendo save:", e);
+        }
+      }
+
+      btnNew.addEventListener("click", () => {
+        window.location.href = "manager_select.html";
+      });
+
+      btnContinue.addEventListener("click", () => {
+        if (btnContinue.disabled) return;
+        window.location.href = "lobby.html";
+      });
+
+      carregarSave();
+    </script>
+  </body>
+</html>
