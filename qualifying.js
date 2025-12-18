@@ -212,17 +212,38 @@ async function loadTrackSvg(trackKey) {
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, "image/svg+xml");
-  const path = doc.querySelector("path");
-  if (!path) {
+
+  // FIX: muitas pistas têm vários <path> (decorativos + traçado).
+  // Pegamos o path com maior length (mesma lógica do treino/race) para ser robusto.
+  const paths = Array.from(doc.querySelectorAll("path"));
+  if (!paths.length) {
     console.error("Nenhum <path> encontrado no SVG da pista.");
     return;
   }
 
-  const pathLen = path.getTotalLength();
+  let main = null;
+  let bestLen = -1;
+  for (const p of paths) {
+    try {
+      const len = p.getTotalLength();
+      if (len > bestLen) {
+        bestLen = len;
+        main = p;
+      }
+    } catch {
+      // ignora
+    }
+  }
+  if (!main) {
+    console.error("Não foi possível detectar o path principal da pista.");
+    return;
+  }
+
+  const pathLen = main.getTotalLength();
   const samples = 400;
   const pts = [];
   for (let i = 0; i < samples; i++) {
-    const p = path.getPointAtLength((pathLen * i) / samples);
+    const p = main.getPointAtLength((pathLen * i) / samples);
     pts.push({ x: p.x, y: p.y });
   }
 
