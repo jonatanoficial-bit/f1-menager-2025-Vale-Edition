@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>F1 MANAGER 2025 — Corrida Rápida</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Importa o estilo base para manter identidade visual -->
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --bg: #05070c;
+      --card-bg: rgba(12, 12, 18, 0.92);
+      --card-radius: 18px;
+      --accent-blue: #40c4ff;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #ffffff;
+      background: var(--bg);
+    }
+    .wrapper {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 20px 16px 32px;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    .topbar h1 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .btn-back {
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: none;
+      background: #ff1744;
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      box-shadow: 0 0 16px rgba(0,0,0,0.45);
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn-back:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(255, 23, 68, 0.45);
+      background: #ff4566;
+    }
+    .btn-back:active {
+      transform: translateY(0);
+      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    }
+    .intro {
+      margin-bottom: 16px;
+      font-size: 0.9rem;
+      opacity: 0.85;
+      max-width: 680px;
+      line-height: 1.45;
+    }
+    .gp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .gp-card {
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--card-radius);
+      padding: 16px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 120px;
+    }
+    .gp-card h3 {
+      margin: 0;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .gp-card button {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 999px;
+      border: none;
+      background: var(--accent-blue);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease;
+    }
+    .gp-card button:hover {
+      transform: translateY(-1px);
+      background: #5cdfff;
+    }
+    .gp-card button:active {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="topbar">
+      <button class="btn-back" onclick="window.history.back()">Voltar</button>
+      <h1>Corrida rápida</h1>
+      <div style="width:80px;"></div>
+    </div>
+    <p class="intro">
+      Selecione um Grande Prêmio para iniciar uma corrida imediata sem treinos ou classificação. 
+      A corrida usará sua equipe atual e as configurações de carro vigentes.
+    </p>
+    <div id="gp-list" class="gp-grid"></div>
+  </div>
+
+  <script>
+    // Lista oficial dos 24 Grandes Prêmios (alinhado ao calendário 2025)
+    const GPs = [
+      "Bahrain", "Saudi Arabia", "Australia", "Japan", "China",
+      "Miami", "Emilia-Romagna", "Monaco", "Canada", "Spain",
+      "Austria", "United Kingdom", "Hungary", "Belgium", "Netherlands",
+      "Italy", "Azerbaijan", "Singapore", "USA", "Mexico",
+      "Brazil", "Las Vegas", "Qatar", "Abu Dhabi"
+    ];
+    // Mapeamento de nome de GP para chave de pista usada nas páginas de simulação
+    const GP_TO_TRACK = {
+      "Bahrain": "bahrain",
+      "Saudi Arabia": "saudiarabia",
+      "Australia": "australia",
+      "Japan": "japan",
+      "China": "china",
+      "Miami": "miami",
+      "Emilia-Romagna": "imola",
+      "Monaco": "monaco",
+      "Canada": "canada",
+      "Spain": "spain",
+      "Austria": "austria",
+      "United Kingdom": "britain",
+      "Hungary": "hungary",
+      "Belgium": "belgium",
+      "Netherlands": "netherlands",
+      "Italy": "italy",
+      "Azerbaijan": "azerbaijan",
+      "Singapore": "singapore",
+      "USA": "usa",
+      "Mexico": "mexico",
+      "Brazil": "brazil",
+      "Las Vegas": "lasvegas",
+      "Qatar": "qatar",
+      "Abu Dhabi": "abudhabi"
+    };
+
+    function createCards() {
+      const list = document.getElementById("gp-list");
+      list.innerHTML = "";
+      GPs.forEach(gp => {
+        const trackKey = GP_TO_TRACK[gp];
+        const card = document.createElement("div");
+        card.className = "gp-card";
+        const title = document.createElement("h3");
+        title.textContent = gp;
+        const btn = document.createElement("button");
+        btn.textContent = "Iniciar corrida";
+        btn.addEventListener("click", () => {
+          startQuickRace(trackKey, gp);
+        });
+        card.appendChild(title);
+        card.appendChild(btn);
+        list.appendChild(card);
+      });
+    }
+
+    function startQuickRace(trackKey, gpName) {
+      // Obtém a equipe do usuário do localStorage (padrão: ferrari)
+      let userTeam = localStorage.getItem("f1m2025_user_team");
+      if (!userTeam) {
+        userTeam = "ferrari";
+      }
+      // Monta nome oficial do GP (por exemplo, "GP da Austrália 2025") com prefixo "GP "
+      const fullName = `GP ${gpName} 2025`;
+      // Redireciona diretamente para a corrida, sem treinos ou qualificação
+      const url = `race.html?track=${trackKey}&gp=${encodeURIComponent(fullName)}&userTeam=${encodeURIComponent(userTeam)}`;
+      window.location.href = url;
+    }
+
+    // Inicializa cards após carregar a página
+    document.addEventListener("DOMContentLoaded", createCards);
+  </script>
+</body>
+</html>

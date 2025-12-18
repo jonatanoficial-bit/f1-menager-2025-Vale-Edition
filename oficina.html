@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>F1 Manager 2025 – Oficina</title>
+<link rel="stylesheet" href="oficina.css"/>
+<script src="oficina.js" defer></script>
+</head>
+
+<body>
+
+<div class="oficina-bg"></div>
+
+<div class="oficina-container">
+
+  <!-- HEADER TOPO -->
+  <div class="oficina-header">
+    <img id="oficina-team-logo" class="team-logo" src="" alt="LOGO"/>
+
+    <div class="oficina-title">
+      <h1>OFICINA</h1>
+      <h3 id="oficina-team-name"></h3>
+    </div>
+
+    <button class="back-btn" id="back-lobby-btn">VOLTAR</button>
+  </div>
+
+
+  <!-- CARDS DE AJUSTES -->
+  <div class="setup-panel">
+
+    <div class="setup-card">
+      <h2>ASA DIANTEIRA</h2>
+      <input type="range" min="1" max="10" step="1" id="setup-frontwing"/>
+      <p>Atual: <span id="val-frontwing"></span></p>
+    </div>
+
+    <div class="setup-card">
+      <h2>ASA TRASEIRA</h2>
+      <input type="range" min="1" max="10" step="1" id="setup-rearwing"/>
+      <p>Atual: <span id="val-rearwing"></span></p>
+    </div>
+
+    <div class="setup-card">
+      <h2>PRESSÃO DOS PNEUS</h2>
+      <input type="range" min="18" max="24" step="0.1" id="setup-tyrepress"/>
+      <p>Atual: <span id="val-tyrepress"></span> PSI</p>
+    </div>
+
+    <div class="setup-card">
+      <h2>ALTURA DO CARRO</h2>
+      <input type="range" min="1" max="10" step="1" id="setup-rideheight"/>
+      <p>Atual: <span id="val-rideheight"></span></p>
+    </div>
+
+    <div class="setup-card">
+      <h2>RIGIDEZ DA SUSPENSÃO</h2>
+      <input type="range" min="1" max="10" step="1" id="setup-susp"/>
+      <p>Atual: <span id="val-susp"></span></p>
+    </div>
+
+  </div>
+
+
+  <!-- RESUMO E BOTÃO -->
+  <div class="oficina-summary">
+
+    <h2>Impacto estimado</h2>
+
+    <div class="summary-line">
+      Velocidade estimada: <strong><span id="sum-speed">---</span></strong>
+    </div>
+    <div class="summary-line">
+      Desgaste de pneus: <strong><span id="sum-tyre">---</span></strong>
+    </div>
+    <div class="summary-line">
+      Estabilidade em curvas: <strong><span id="sum-corner">---</span></strong>
+    </div>
+
+    <button class="save-setup-btn" id="save-setup-btn">SALVAR AJUSTES</button>
+
+  </div>
+
+</div>
+
+</body>
+</html>
