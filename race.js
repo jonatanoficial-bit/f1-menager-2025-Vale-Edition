@@ -654,6 +654,19 @@
     state.trackPath = findBestTrackPath(state.svgRoot);
     if (!state.trackPath) throw new Error("Nenhum <path> válido encontrado no SVG (race line)");
 
+    // FIX: enquadra o traçado para evitar pista minúscula/cortada (mesmo bug reportado nos treinos)
+    // Usa o bbox do path principal para recalcular o viewBox, garantindo que o SVG ocupe a área.
+    try {
+      const bb = state.trackPath.getBBox();
+      const pad = Math.max(20, Math.max(bb.width, bb.height) * 0.08);
+      state.svgRoot.setAttribute(
+        "viewBox",
+        `${bb.x - pad} ${bb.y - pad} ${bb.width + pad * 2} ${bb.height + pad * 2}`
+      );
+    } catch (e) {
+      console.warn("[race] Falha ao normalizar viewBox:", e);
+    }
+
     state.pathPoints = buildPathPoints(state.trackPath, 1800);
     if (!state.pathPoints || state.pathPoints.length < 80) {
       throw new Error("Falha ao gerar pathPoints (path curto/inválido)");
